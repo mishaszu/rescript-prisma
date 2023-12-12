@@ -63,7 +63,7 @@ module Client = {
   type t
 
   @module("@prisma/client") @new external make: unit => t = "PrismaClient"
-  @module("@prisma/client") external disconnect: t => unit = "$disconnect"
+  @send external disconnect: t => unit = "$disconnect"
 }
 
 module type Schema = {
