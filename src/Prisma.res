@@ -15,6 +15,7 @@ module Query = {
   type createSingle<'m> = {"data": 'm}
   type createMany<'m> = {"data": array<'m>, "skipDuplicates": Js.undefined<bool>}
   type createWhere<'m, 'n> = {"where": 'm, "data": 'n}
+  type upsertWhere<'m, 'n> = {"where": 'm, "create": 'n}
   type update<'m, 'n> = {"where": 'm, "data": 'n}
   type updateMany<'m, 'n> = {"where": 'm, "data": array<'n>}
 }
@@ -44,7 +45,7 @@ module Find = {
 module Create = {
   @send external create: (model<'t>, Query.createSingle<'m>) => promise<'n> = "create"
   @send external createMany: (model<'t>, Query.createMany<'m>) => promise<'n> = "createMany"
-  @send external upsert: (model<'t>, Query.createWhere<'m, 'n>) => promise<'o> = "upsert"
+  @send external upsert: (model<'t>, Query.upsertWhere<'m, 'n>) => promise<'o> = "upsert"
 }
 
 module Update = {
@@ -87,7 +88,7 @@ module Make = (Item: Schema) => {
         {"data": data, "skipDuplicates": Js.Undefined.fromOption(skipDuplicates)},
       )
     let upsert = (where: Query.where<'a>, data: Item.createModel): promise<Item.t> =>
-      Create.upsert(model, {"where": where, "data": data})
+      Create.upsert(model, {"where": where, "create": data})
   }
 
   module Read = {
