@@ -9,8 +9,8 @@ module Query = {
   type whereId = {"where": {"id": string}}
   type selectWhere<'m, 'n> = {"where": 'm, "select": 'n}
 
-  type uniqueWhere = {"where": {"id": string}, "rejectOnNotFound": bool}
-  type uniqueSelectWhere<'m> = {"where": {"id": string}, "select": 'm, "rejectOnNotFound": bool}
+  type uniqueWhere = {"where": {"id": string}}
+  type uniqueSelectWhere<'m> = {"where": {"id": string}, "select": 'm}
 
   type createSingle<'m> = {"data": 'm}
   type createMany<'m> = {"data": array<'m>, "skipDuplicates": Js.undefined<bool>}
@@ -76,19 +76,20 @@ module type Schema = {
 
 module Make = (Item: Schema) => {
   type t = Item.t
+  type createModel = Item.createModel
+  type updateModel = Item.updateModel
+
   let model = Item.extractModel(Item.client)
 
   module Create = {
-    let create = (data: Item.createModel): promise<Item.t> => Create.create(model, {"data": data})
-    let createMany = (~data: array<Item.createModel>, ~skipDuplicates: option<bool>): promise<
-      Item.t,
-    > =>
+    let create = (data: createModel): promise<Item.t> => Create.create(model, {"data": data})
+    let createMany = (~data: array<createModel>, ~skipDuplicates: option<bool>): promise<Item.t> =>
       Create.createMany(
         model,
         {"data": data, "skipDuplicates": Js.Undefined.fromOption(skipDuplicates)},
       )
-    let upsert = (where: Query.where<'a>, data: Item.createModel, update: 'b): promise<Item.t> =>
-      Create.upsert(model, {"where": where, "create": data, "update": update})
+    let upsert = (where: Query.where<'a>, data: createModel, update: 'b): promise<Item.t> =>
+      Create.upsert(model, {"where": where["where"], "create": data, "update": update})
   }
 
   module Read = {
@@ -99,7 +100,7 @@ module Make = (Item: Schema) => {
       Find.manySelectWhere(model, selectWhere)
 
     let uniqueById = (id: string): promise<result<Item.t, findError>> =>
-      Find.uniqueById(model, {"where": {"id": id}, "rejectOnNotFound": true})
+      Find.uniqueById(model, {"where": {"id": id}})
       ->Promise.then(async item =>
         switch item->Js.Null.toOption {
         | Some(item) => Ok(item)
@@ -140,14 +141,14 @@ module Make = (Item: Schema) => {
   }
 
   module Update = {
-    let update = (where: Query.where<'a>, data: Item.updateModel): promise<result<Item.t, error>> =>
-      Update.update(model, {"where": where, "data": data})
+    let update = (where: Query.where<'a>, data: updateModel): promise<result<Item.t, error>> =>
+      Update.update(model, {"where": where["where"], "data": data})
       ->Promise.then(async item => Ok(item))
       ->Promise.catch(async _ => Error(RecordNotFound))
-    let updateMany = (where: Query.where<'a>, data: array<Item.updateModel>): promise<
+    let updateMany = (where: Query.where<'a>, data: array<updateModel>): promise<
       result<Item.t, error>,
     > =>
-      Update.updateMany(model, {"where": where, "data": data})
+      Update.updateMany(model, {"where": where["where"], "data": data})
       ->Promise.then(async item => Ok(item))
       ->Promise.catch(async _ => Error(RecordNotFound))
   }
