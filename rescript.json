@@ -1,5 +1,6 @@
 {
   "name": "rescript-prisma",
+  "bsc-flags": ["-open RescriptCore"],
   "version": "0.1.0",
   "sources": [
     {
@@ -11,5 +12,6 @@
     "module": "commonjs",
     "in-source": true
   },
-  "suffix": ".bs.js"
+  "suffix": ".bs.js",
+  "bs-dependencies": ["@rescript/core"]
 }

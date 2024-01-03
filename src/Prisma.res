@@ -100,41 +100,41 @@ module Make = (Item: Schema) => {
 
     let uniqueById = (id: string): promise<result<Item.t, findError>> =>
       Find.uniqueById(model, {"where": {"id": id}, "rejectOnNotFound": true})
-      ->Js.Promise2.then(async item =>
+      ->Promise.then(async item =>
         switch item->Js.Null.toOption {
         | Some(item) => Ok(item)
         | None => Error(OtherError)
         }
       )
-      ->Js.Promise2.catch(async _ => Error(RejectOnNotFound))
+      ->Promise.catch(async _ => Error(RejectOnNotFound))
     let uniqueByIdSelectWhere = (idSelectWhere: Query.uniqueSelectWhere<'a>) =>
       Find.uniqueByIdSelectWhere(model, idSelectWhere)
-      ->Js.Promise2.then(async item =>
+      ->Promise.then(async item =>
         switch item->Js.Null.toOption {
         | Some(item) => Ok(item)
         | None => Error(OtherError)
         }
       )
-      ->Js.Promise2.catch(async _ => Error(RejectOnNotFound))
+      ->Promise.catch(async _ => Error(RejectOnNotFound))
 
     let unique = (where: Query.where<'a>): promise<result<Item.t, findError>> =>
       Find.unique(model, where)
-      ->Js.Promise2.then(async item =>
+      ->Promise.then(async item =>
         switch item->Js.Null.toOption {
         | Some(item) => Ok(item)
         | None => Error(OtherError)
         }
       )
-      ->Js.Promise2.catch(async _ => Error(RejectOnNotFound))
+      ->Promise.catch(async _ => Error(RejectOnNotFound))
     let uniqueSelectWhere = (selectWhere: Query.selectWhere<'a, 'b>) =>
       Find.uniqueSelectWhere(model, selectWhere)
-      ->Js.Promise2.then(async item =>
+      ->Promise.then(async item =>
         switch item->Js.Null.toOption {
         | Some(item) => Ok(item)
         | None => Error(OtherError)
         }
       )
-      ->Js.Promise2.catch(async _ => Error(RejectOnNotFound))
+      ->Promise.catch(async _ => Error(RejectOnNotFound))
 
     let count = (): promise<int> => Find.count(model)
   }

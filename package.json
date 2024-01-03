@@ -9,12 +9,17 @@
   ],
   "scripts": {
     "dev": "rescript build -w",
-    "build": "rescript build"
+    "build": "rescript build",
+    "clean": "rescript clean"
   },
   "author": "mishaszu",
   "license": "ISC",
   "peerDependencies": {
     "prisma": "^5.7.0",
     "rescript": "^10.1.4"
+  },
+  "dependencies": {
+    "@rescript/core": "^0.6.0",
+    "rescript": "^11.0.0-rc.8"
   }
 }
