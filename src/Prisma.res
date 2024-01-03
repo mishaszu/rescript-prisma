@@ -142,28 +142,28 @@ module Make = (Item: Schema) => {
   module Update = {
     let update = (where: Query.where<'a>, data: Item.updateModel): promise<result<Item.t, error>> =>
       Update.update(model, {"where": where, "data": data})
-      ->Js.Promise2.then(async item => Ok(item))
-      ->Js.Promise2.catch(async _ => Error(RecordNotFound))
+      ->Promise.then(async item => Ok(item))
+      ->Promise.catch(async _ => Error(RecordNotFound))
     let updateMany = (where: Query.where<'a>, data: array<Item.updateModel>): promise<
       result<Item.t, error>,
     > =>
       Update.updateMany(model, {"where": where, "data": data})
-      ->Js.Promise2.then(async item => Ok(item))
-      ->Js.Promise2.catch(async _ => Error(RecordNotFound))
+      ->Promise.then(async item => Ok(item))
+      ->Promise.catch(async _ => Error(RecordNotFound))
   }
 
   module Delete = {
     let deleteById = (id: string): promise<result<Item.t, error>> =>
       Delete.deleteById(model, {"where": {"id": id}})
-      ->Js.Promise2.then(async item => Ok(item))
-      ->Js.Promise2.catch(async _ => Error(RecordNotFound))
+      ->Promise.then(async item => Ok(item))
+      ->Promise.catch(async _ => Error(RecordNotFound))
     let delete = (where: Query.where<'a>): promise<result<Item.t, error>> =>
       Delete.delete(model, where)
-      ->Js.Promise2.then(async item => Ok(item))
-      ->Js.Promise2.catch(async _ => Error(RecordNotFound))
+      ->Promise.then(async item => Ok(item))
+      ->Promise.catch(async _ => Error(RecordNotFound))
     let deleteMany = (where: Query.where<'a>): promise<result<Item.t, error>> =>
       Delete.deleteMany(model, where)
-      ->Js.Promise2.then(async item => Ok(item))
-      ->Js.Promise2.catch(async _ => Error(RecordNotFound))
+      ->Promise.then(async item => Ok(item))
+      ->Promise.catch(async _ => Error(RecordNotFound))
   }
 }
